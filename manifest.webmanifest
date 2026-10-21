@@ -1,0 +1,12 @@
+{
+  "name": "Análise de Bandeja — Germinação",
+  "short_name": "Bandeja",
+  "description": "Captura e análise visual de bandejas de germinação de cana-de-açúcar.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f4f6f2",
+  "theme_color": "#183f2b",
+  "icons": [{"src":"icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}]
+}

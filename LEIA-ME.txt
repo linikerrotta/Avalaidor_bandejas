@@ -1,0 +1,20 @@
+ANÁLISE DE BANDEJA — VERSÃO MOBILE/PWA
+
+Conteúdo:
+- index.html: aplicativo web
+- manifest.webmanifest: configuração instalável
+- sw.js: cache básico para uso offline após primeira abertura
+- icon.svg: ícone
+
+COMO USAR:
+1. Hospede todos os arquivos em um endereço HTTPS (por exemplo, servidor interno da empresa ou hospedagem estática aprovada).
+2. Android: abra o endereço no Chrome e escolha Instalar app / Adicionar à tela inicial.
+3. iPhone: abra no Safari, toque em Compartilhar e depois Adicionar à Tela de Início.
+4. Permita acesso à câmera quando solicitado.
+
+OBSERVAÇÕES:
+- A leitura de código de barras usa BarcodeDetector, disponível principalmente em navegadores Chromium recentes. Se não houver suporte, digite lote e ID manualmente.
+- A galeria usa IndexedDB no próprio navegador/dispositivo; não é sincronizada entre celulares e pode ser apagada se os dados do navegador forem limpos.
+- A câmera e a instalação PWA exigem HTTPS (ou localhost).
+- Este pacote é um web app instalável (PWA), não um APK Android nativo.
+- Para gerar APK, o próximo passo é empacotar o web app com Capacitor e compilar no Android Studio.

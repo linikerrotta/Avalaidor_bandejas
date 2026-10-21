@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#183f2b"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icon.svg" type="image/svg+xml">
+<title>Análise de Bandeja — Germinação</title>
+<style>
+:root{--bg:#f4f6f2;--card:#fff;--ink:#1f2b23;--muted:#667269;--green:#236b43;--line:#dce4dc;--accent:#d4e9d8}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}header{padding:20px 16px 16px;background:#183f2b;color:white}header h1{font-size:22px;margin:0 0 4px}header p{margin:0;color:#d7e8dc;font-size:13px}.samplefields{display:grid;grid-template-columns:1fr;gap:10px}.sample-actions{display:flex;gap:8px;flex-wrap:wrap}.gallery-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px}.gallery-item{border:1px solid var(--line);border-radius:10px;padding:8px;min-width:0}.gallery-item img{width:100%;aspect-ratio:1/1;object-fit:cover;border-radius:7px;background:#eef2ee}.gallery-item strong{display:block;font-size:12px;overflow-wrap:anywhere}.gallery-item small{display:block;color:var(--muted);font-size:11px}.gallery-item button{margin-top:6px;width:100%}.install-note{background:#edf5ee;border-radius:10px;padding:10px;font-size:12px;color:#23452e}.wrap{max-width:1000px;margin:auto;padding:14px;display:grid;gap:14px}.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;box-shadow:0 2px 10px #172b1a0a}h2{font-size:17px;margin:0 0 10px}.controls{display:flex;gap:8px;flex-wrap:wrap}.btn{border:0;border-radius:10px;padding:11px 14px;font-weight:650;cursor:pointer;background:var(--green);color:white}.btn.secondary{background:#e8efe9;color:#23452e}.btn:disabled{opacity:.45;cursor:not-allowed}.stage{position:relative;background:#121713;border-radius:12px;overflow:hidden;min-height:240px;display:grid;place-items:center}video,#still{display:block;width:100%;max-height:72vh;object-fit:contain}#still{display:none}#overlay{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}.placeholder{padding:35px 20px;text-align:center;color:#d7e4da}.hint{font-size:12px;color:var(--muted);margin:9px 0 0}.fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px}.field label{display:block;font-size:12px;color:var(--muted);margin-bottom:4px}.field input,.field select{width:100%;padding:9px;border:1px solid var(--line);border-radius:8px;background:white;color:var(--ink)}.field input[type=range]{padding:0}.metricgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.metric{background:#f2f7f2;border-radius:10px;padding:11px}.metric small{display:block;color:var(--muted);font-size:11px}.metric strong{font-size:21px}.tablewrap{overflow:auto;max-height:460px;border:1px solid var(--line);border-radius:10px}table{width:100%;border-collapse:collapse;font-size:13px;white-space:nowrap}th,td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:right}th{background:#edf3ed;position:sticky;top:0}td:first-child,th:first-child{text-align:left}.pill{font-size:11px;padding:3px 7px;border-radius:20px;background:#e8efe9}.status{font-size:13px;color:var(--muted);margin-top:8px;min-height:18px}.legend{display:flex;gap:12px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin-top:8px}.dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:4px}.warn{background:#fff7e6;border:1px solid #f1d79b;border-radius:10px;padding:10px;font-size:12px;color:#6c5117}.footer{font-size:12px;color:var(--muted);padding:0 3px 20px}@media(min-width:800px){.wrap{grid-template-columns:1.1fr .9fr;align-items:start}.wide{grid-column:1/-1}}
+</style></head><body>
+<header><h1>Análise de bandeja · Germinação</h1><p>Protótipo de visão computacional para bandejas de 7 × 12 poços</p></header>
+<main class="wrap">
+<section class="card wide"><h2>Identificação da amostra</h2>
+<div class="fields">
+<div class="field"><label for="lot">Lote</label><input id="lot" type="text" placeholder="Ex.: MC-26-0107" autocomplete="off"></div>
+<div class="field"><label for="trayId">ID da bandeja</label><input id="trayId" type="text" placeholder="Código da bandeja" autocomplete="off"></div>
+<div class="field"><label for="barcodeTarget">Preencher com leitura</label><select id="barcodeTarget"><option value="trayId">ID da bandeja</option><option value="lot">Lote</option></select></div>
+</div>
+<div class="sample-actions" style="margin-top:10px"><button class="btn secondary" id="scanBarcodeBtn">Ler código de barras</button><button class="btn secondary" id="stopScanBtn" disabled>Parar leitura</button></div>
+<p class="hint">A leitura depende do suporte do navegador ao leitor de códigos de barras. Se não funcionar, digite o código manualmente. O conteúdo lido será colocado no campo escolhido.</p>
+<div class="status" id="barcodeStatus"></div>
+<div class="install-note">Para instalar no celular como aplicativo, publique esta pasta em um endereço HTTPS. No Android, abra no Chrome e escolha “Instalar app” ou “Adicionar à tela inicial”. No iPhone, abra no Safari e use “Compartilhar” → “Adicionar à Tela de Início”.</div>
+</section>
+<section class="card"><h2>1. Captura e alinhamento</h2><div class="stage" id="stage"><div class="placeholder" id="placeholder">Abra a câmera ou carregue uma foto da bandeja.<br>Alinhe os 84 poços com a grade antes de analisar.</div><video id="video" autoplay playsinline muted></video><img id="still" alt="Foto da bandeja"><canvas id="overlay"></canvas></div><div class="controls" style="margin-top:10px"><button class="btn" id="cameraBtn">Abrir câmera</button><button class="btn secondary" id="captureBtn" disabled>Fotografar</button><button class="btn secondary" id="retakeBtn" disabled>Voltar à câmera</button><label class="btn secondary" for="upload">Carregar foto</label><input id="upload" type="file" accept="image/*" hidden></div><p class="hint">Dica: fotografe de cima, com a bandeja inteira visível e o celular o mais paralelo possível ao plano dos poços.</p><div class="status" id="cameraStatus"></div></section>
+<section class="card"><h2>2. Ajuste da grade</h2><div class="fields"><div class="field"><label for="cols">Colunas</label><input id="cols" type="number" min="1" max="20" value="7"></div><div class="field"><label for="rows">Linhas</label><input id="rows" type="number" min="1" max="20" value="12"></div><div class="field"><label for="width">Largura da grade (%)</label><input id="width" type="range" min="35" max="98" value="82"></div><div class="field"><label for="height">Altura da grade (%)</label><input id="height" type="range" min="35" max="98" value="86"></div><div class="field"><label for="xpos">Deslocamento horizontal</label><input id="xpos" type="range" min="-25" max="25" value="0"></div><div class="field"><label for="ypos">Deslocamento vertical</label><input id="ypos" type="range" min="-25" max="25" value="0"></div><div class="field"><label for="roi">Área analisada dentro de cada célula (%)</label><input id="roi" type="range" min="20" max="90" value="58"></div></div><div class="legend"><span><i class="dot" style="background:#fff;border:1px solid #333"></i>Grade de poços</span><span><i class="dot" style="background:#30e56d"></i>Área de leitura central</span></div><p class="hint">Ajuste largura, altura e deslocamentos até as linhas coincidirem com os centros dos poços. A leitura usa uma região central circular, limitada à célula.</p><div class="controls" style="margin-top:10px"><button class="btn" id="analyzeBtn" disabled>Analisar 84 células</button><button class="btn secondary" id="resetBtn">Redefinir grade</button></div><div class="status" id="analysisStatus"></div></section>
+<section class="card wide"><h2>3. Resultado da análise</h2><div class="metricgrid"><div class="metric"><small>Células analisadas</small><strong id="mCells">—</strong></div><div class="metric"><small>Verde médio</small><strong id="mGreen">—</strong></div><div class="metric"><small>Amarelo médio</small><strong id="mYellow">—</strong></div></div><div class="warn" style="margin:12px 0">Os percentuais são estimativas por cor (RGB/HSV), não uma confirmação biológica de germinação. Tons amarelados são reportados separadamente para facilitar a identificação de plantas possivelmente cloróticas/albinas. Os limites devem ser calibrados com imagens e avaliações reais.</div><div class="controls" style="margin-bottom:10px"><button class="btn secondary" id="csvBtn" disabled>Exportar CSV</button><button class="btn secondary" id="jsonBtn" disabled>Exportar JSON</button><button class="btn secondary" id="imageBtn" disabled>Salvar imagem anotada</button></div><div class="tablewrap"><table><thead><tr><th>Célula</th><th>Verde (%)</th><th>Amarelo (%)</th><th>Pixels lidos</th><th>Classe visual*</th></tr></thead><tbody id="results"><tr><td colspan="5" style="text-align:left;color:#667269">Faça uma captura e clique em “Analisar”.</td></tr></tbody></table></div><p class="hint">*Classe visual preliminar: verde detectado, amarelo detectado ou pouca cor detectada. Não equivale automaticamente a germinada/não germinada.</p></section>
+<section class="card wide"><h2>4. Galeria de análises salvas</h2>
+<p class="hint">As capturas e os resultados são guardados neste dispositivo. O armazenamento do navegador pode ser apagado pelo sistema; exporte os relatórios importantes para backup.</p>
+<div class="controls" style="margin:10px 0"><button class="btn" id="saveAnalysisBtn" disabled>Salvar análise na galeria</button><button class="btn secondary" id="refreshGalleryBtn">Atualizar galeria</button></div>
+<div class="status" id="galleryStatus"></div><div class="gallery-list" id="galleryList"><p class="hint">Nenhuma análise salva ainda.</p></div>
+</section>
+<p class="footer wide">Protótipo local: as imagens são processadas no próprio navegador e não são enviadas a um servidor. Para usar a câmera, o navegador normalmente exige HTTPS ou localhost.</p>
+</main><canvas id="work" hidden></canvas>
+<script>
+const $=id=>document.getElementById(id);const video=$('video'),still=$('still'),overlay=$('overlay'),ctx=overlay.getContext('2d'),work=$('work'),wctx=work.getContext('2d',{willReadFrequently:true});let stream=null,sourceImage=null,sourceKind='none',lastResults=[],annotatedCanvas=null;
+function currentSource(){return sourceKind==='camera'?video:still}
+function hasSource(){return sourceKind==='camera'?(video.videoWidth>0):(still.naturalWidth>0)}
+function setupStage(){const stage=$('stage');let el=currentSource();if(!hasSource())return;const rect=stage.getBoundingClientRect();const ratio=el.videoWidth?el.videoWidth/el.videoHeight:el.naturalWidth/el.naturalHeight;let cw=rect.width,ch=rect.width/ratio;const maxh=window.innerHeight*.72;if(ch>maxh){ch=maxh;cw=ch*ratio}overlay.width=Math.round(cw*devicePixelRatio);overlay.height=Math.round(ch*devicePixelRatio);overlay.style.width=cw+'px';overlay.style.height=ch+'px';overlay.style.position='absolute';overlay.style.left='50%';overlay.style.top='50%';overlay.style.transform='translate(-50%,-50%)';drawGrid();}
+function params(){return {cols:Math.max(1,Math.min(20,parseInt($('cols').value)||7)),rows:Math.max(1,Math.min(20,parseInt($('rows').value)||12)),gw:+$('width').value/100,gh:+$('height').value/100,ox:+$('xpos').value/100,oy:+$('ypos').value/100,roi:+$('roi').value/100}}
+function gridRect(){let p=params(),W=overlay.width,H=overlay.height;let gw=W*p.gw,gh=H*p.gh;return {x:(W-gw)/2+p.ox*W,y:(H-gh)/2+p.oy*H,w:gw,h:gh,...p}}
+function drawGrid(){if(!overlay.width)return;let r=gridRect(),W=overlay.width,H=overlay.height;ctx.clearRect(0,0,W,H);ctx.save();ctx.lineWidth=Math.max(1.5,devicePixelRatio*1.2);ctx.strokeStyle='rgba(255,255,255,.9)';ctx.fillStyle='rgba(10,30,15,.12)';ctx.strokeRect(r.x,r.y,r.w,r.h);for(let c=1;c<r.cols;c++){let x=r.x+r.w*c/r.cols;ctx.beginPath();ctx.moveTo(x,r.y);ctx.lineTo(x,r.y+r.h);ctx.stroke()}for(let rr=1;rr<r.rows;rr++){let y=r.y+r.h*rr/r.rows;ctx.beginPath();ctx.moveTo(r.x,y);ctx.lineTo(r.x+r.w,y);ctx.stroke()}for(let rr=0;rr<r.rows;rr++)for(let c=0;c<r.cols;c++){let cx=r.x+r.w*(c+.5)/r.cols,cy=r.y+r.h*(rr+.5)/r.rows,rad=Math.min(r.w/r.cols,r.h/r.rows)*r.roi*.5;ctx.beginPath();ctx.arc(cx,cy,rad,0,Math.PI*2);ctx.fillStyle='rgba(40,255,100,.13)';ctx.fill();ctx.strokeStyle='rgba(40,255,100,.9)';ctx.lineWidth=Math.max(1,devicePixelRatio);ctx.stroke()}ctx.restore()}
+function setStatus(id,msg){$(id).textContent=msg}
+async function openCamera(){try{if(stream)stream.getTracks().forEach(t=>t.stop());stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'},width:{ideal:1920},height:{ideal:1080}},audio:false});video.srcObject=stream;sourceKind='camera';video.style.display='block';still.style.display='none';$('placeholder').style.display='none';await video.play();$('captureBtn').disabled=false;$('retakeBtn').disabled=true;$('analyzeBtn').disabled=true;setStatus('cameraStatus','Câmera ativa. Ajuste a grade e fotografe.');setTimeout(setupStage,250)}catch(e){setStatus('cameraStatus','Não foi possível abrir a câmera. Verifique a permissão do navegador ou carregue uma foto. ('+e.message+')')}}
+$('cameraBtn').onclick=openCamera;
+$('captureBtn').onclick=()=>{if(!video.videoWidth)return;let c=document.createElement('canvas');c.width=video.videoWidth;c.height=video.videoHeight;c.getContext('2d').drawImage(video,0,0);still.src=c.toDataURL('image/jpeg',.95);still.onload=()=>{sourceKind='still';video.style.display='none';still.style.display='block';if(stream){stream.getTracks().forEach(t=>t.stop());stream=null}$('captureBtn').disabled=true;$('retakeBtn').disabled=false;$('analyzeBtn').disabled=false;setStatus('cameraStatus','Foto capturada. Confirme o alinhamento antes de analisar.');setupStage()}};
+$('retakeBtn').onclick=()=>{sourceKind='camera';video.style.display='block';still.style.display='none';$('analyzeBtn').disabled=true;openCamera()};
+$('upload').onchange=e=>{let f=e.target.files[0];if(!f)return;let url=URL.createObjectURL(f);still.onload=()=>{sourceKind='still';video.style.display='none';still.style.display='block';$('placeholder').style.display='none';$('captureBtn').disabled=true;$('retakeBtn').disabled=false;$('analyzeBtn').disabled=false;setStatus('cameraStatus','Foto carregada: '+f.name);setupStage()};still.src=url;if(stream){stream.getTracks().forEach(t=>t.stop());stream=null}};
+['cols','rows','width','height','xpos','ypos','roi'].forEach(id=>$(id).addEventListener('input',()=>{drawGrid()}));window.addEventListener('resize',()=>setTimeout(setupStage,100));$('resetBtn').onclick=()=>{ $('cols').value=7;$('rows').value=12;$('width').value=82;$('height').value=86;$('xpos').value=0;$('ypos').value=0;$('roi').value=58;drawGrid()};
+function classify(r,g,b){let max=Math.max(r,g,b),min=Math.min(r,g,b),delta=max-min,h=0,s=max===0?0:delta/max,v=max/255;if(delta){if(max===r)h=60*(((g-b)/delta)%6);else if(max===g)h=60*((b-r)/delta+2);else h=60*((r-g)/delta+4);if(h<0)h+=360}let green=(h>=65&&h<=170&&s>.18&&g>r*1.03&&g>b*.88&&v>.12);let yellow=(h>=35&&h<68&&s>.18&&r>g*.92&&g>b*1.12&&v>.18);return [green,yellow]}
+function analyze(){if(!hasSource())return;let el=currentSource(),iw=el.videoWidth||el.naturalWidth,ih=el.videoHeight||el.naturalHeight;work.width=iw;work.height=ih;wctx.drawImage(el,0,0,iw,ih);let pixels=wctx.getImageData(0,0,iw,ih).data;let r=gridRect(),sx=iw/overlay.width,sy=ih/overlay.height;lastResults=[];let greenTotal=0,yellowTotal=0;let annotated=document.createElement('canvas');annotated.width=iw;annotated.height=ih;let ac=annotated.getContext('2d');ac.drawImage(el,0,0,iw,ih);ac.strokeStyle='#fff';ac.lineWidth=Math.max(2,iw/700);let gx=r.x*sx,gy=r.y*sy,gw=r.w*sx,gh=r.h*sy;ac.strokeRect(gx,gy,gw,gh);for(let c=1;c<r.cols;c++){ac.beginPath();ac.moveTo(gx+gw*c/r.cols,gy);ac.lineTo(gx+gw*c/r.cols,gy+gh);ac.stroke()}for(let rr=1;rr<r.rows;rr++){ac.beginPath();ac.moveTo(gx,gy+gh*rr/r.rows);ac.lineTo(gx+gw,gy+gh*rr/r.rows);ac.stroke()}
+for(let rr=0;rr<r.rows;rr++)for(let c=0;c<r.cols;c++){let cx=(r.x+r.w*(c+.5)/r.cols)*sx,cy=(r.y+r.h*(rr+.5)/r.rows)*sy,rad=Math.min(r.w/r.cols*sx,r.h/r.rows*sy)*r.roi*.5;let x0=Math.max(0,Math.floor(cx-rad)),x1=Math.min(iw-1,Math.ceil(cx+rad)),y0=Math.max(0,Math.floor(cy-rad)),y1=Math.min(ih-1,Math.ceil(cy+rad));let count=0,gc=0,yc=0;for(let y=y0;y<=y1;y++)for(let x=x0;x<=x1;x++){let dx=x-cx,dy=y-cy;if(dx*dx+dy*dy>rad*rad)continue;let i=(y*iw+x)*4;let [g,yel]=classify(pixels[i],pixels[i+1],pixels[i+2]);count++;if(g)gc++;if(yel)yc++}let gp=count?100*gc/count:0,yp=count?100*yc/count:0;greenTotal+=gp;yellowTotal+=yp;let id=`L${String(rr+1).padStart(2,'0')}-C${String(c+1).padStart(2,'0')}`;let label=gp>=5?'Verde detectado':yp>=5?'Amarelo detectado':'Pouca cor detectada';lastResults.push({celula:id,linha:rr+1,coluna:c+1,verde_pct:+gp.toFixed(2),amarelo_pct:+yp.toFixed(2),pixels_lidos:count,classe_visual:label});ac.beginPath();ac.arc(cx,cy,rad,0,Math.PI*2);ac.strokeStyle=gp>=5?'#29ed72':yp>=5?'#ffdb32':'#ffffff';ac.lineWidth=Math.max(2,iw/600);ac.stroke();ac.fillStyle='#fff';ac.font=`bold ${Math.max(12,iw/85)}px sans-serif`;ac.fillText(String(rr*r.cols+c+1),cx-rad*.35,cy+rad*.35)}annotatedCanvas=annotated;let avgG=greenTotal/lastResults.length,avgY=yellowTotal/lastResults.length;$('mCells').textContent=lastResults.length;$('mGreen').textContent=avgG.toFixed(1)+'%';$('mYellow').textContent=avgY.toFixed(1)+'%';$('results').innerHTML=lastResults.map(a=>`<tr><td>${a.celula}</td><td>${a.verde_pct.toFixed(2)}%</td><td>${a.amarelo_pct.toFixed(2)}%</td><td>${a.pixels_lidos}</td><td><span class="pill">${a.classe_visual}</span></td></tr>`).join('');['csvBtn','jsonBtn','imageBtn'].forEach(id=>$(id).disabled=false);setStatus('analysisStatus',`Concluído: ${r.cols} colunas × ${r.rows} linhas. A leitura usa somente a região circular central de cada poço.`);drawGrid()}
+$('analyzeBtn').onclick=analyze;
+function download(name,blob){let a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
+$('csvBtn').onclick=()=>{let rows=[['celula','linha','coluna','verde_pct','amarelo_pct','pixels_lidos','classe_visual'],...lastResults.map(o=>[o.celula,o.linha,o.coluna,o.verde_pct,o.amarelo_pct,o.pixels_lidos,o.classe_visual])];download('analise_germinacao.csv',new Blob(['\ufeff'+rows.map(r=>r.map(v=>`"${String(v).replaceAll('"','""')}"`).join(';')).join('\r\n')],{type:'text/csv;charset=utf-8'}))};$('jsonBtn').onclick=()=>download('analise_germinacao.json',new Blob([JSON.stringify({data_analise:new Date().toISOString(),grade:params(),resultados:lastResults},null,2)],{type:'application/json'}));$('imageBtn').onclick=()=>annotatedCanvas&&annotatedCanvas.toBlob(b=>download('bandeja_anotada.png',b),'image/png');
+
+// Identificação, leitura de código de barras e galeria local (IndexedDB)
+let barcodeStream=null, barcodeTimer=null, currentPhotoData=null;
+function getCurrentPhotoData(){
+  if(sourceKind==='camera' && video.videoWidth){
+    const c=document.createElement('canvas'); c.width=video.videoWidth; c.height=video.videoHeight;
+    c.getContext('2d').drawImage(video,0,0); return c.toDataURL('image/jpeg',0.9);
+  }
+  if(still.naturalWidth){
+    const c=document.createElement('canvas'); c.width=still.naturalWidth; c.height=still.naturalHeight;
+    c.getContext('2d').drawImage(still,0,0); return c.toDataURL('image/jpeg',0.9);
+  }
+  return null;
+}
+function dbOpen(){
+ return new Promise((resolve,reject)=>{
+  const req=indexedDB.open('bandeja_germinacao_db',1);
+  req.onupgradeneeded=()=>{const db=req.result;if(!db.objectStoreNames.contains('analises'))db.createObjectStore('analises',{keyPath:'id',autoIncrement:true});};
+  req.onsuccess=()=>resolve(req.result);req.onerror=()=>reject(req.error);
+ });
+}
+async function dbSave(item){
+ const db=await dbOpen();
+ return new Promise((resolve,reject)=>{const tx=db.transaction('analises','readwrite');tx.objectStore('analises').add(item);tx.oncomplete=()=>{db.close();resolve(true)};tx.onerror=()=>{db.close();reject(tx.error)};});
+}
+async function dbAll(){
+ const db=await dbOpen();
+ return new Promise((resolve,reject)=>{const tx=db.transaction('analises','readonly');const req=tx.objectStore('analises').getAll();req.onsuccess=()=>{db.close();resolve(req.result.reverse())};req.onerror=()=>{db.close();reject(req.error)};});
+}
+async function dbDelete(id){
+ const db=await dbOpen();
+ return new Promise((resolve,reject)=>{const tx=db.transaction('analises','readwrite');tx.objectStore('analises').delete(Number(id));tx.oncomplete=()=>{db.close();resolve(true)};tx.onerror=()=>{db.close();reject(tx.error)};});
+}
+function esc(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+async function refreshGallery(){
+ try{
+  const items=await dbAll();const box=$('galleryList');
+  if(!items.length){box.innerHTML='<p class="hint">Nenhuma análise salva ainda.</p>';return;}
+  box.innerHTML=items.map(item=>`<div class="gallery-item"><img src="${item.photo}" alt="Foto da bandeja"><strong>${esc(item.lot||'Sem lote')}</strong><small>Bandeja: ${esc(item.trayId||'Sem ID')}</small><small>${new Date(item.savedAt).toLocaleString('pt-BR')}</small><small>Verde médio: ${item.greenAvg}% · Amarelo médio: ${item.yellowAvg}%</small><button class="btn secondary" data-delete="${item.id}">Excluir</button><button class="btn secondary" data-export="${item.id}">Exportar JSON</button></div>`).join('');
+  box.querySelectorAll('[data-delete]').forEach(b=>b.onclick=async()=>{if(confirm('Excluir esta análise salva neste dispositivo?')){await dbDelete(b.dataset.delete);refreshGallery()}});
+  box.querySelectorAll('[data-export]').forEach(b=>b.onclick=async()=>{const item=items.find(x=>x.id===Number(b.dataset.export));if(item)download(`analise_${(item.trayId||'bandeja').replace(/[^a-z0-9_-]/gi,'_')}.json`,new Blob([JSON.stringify(item,null,2)],{type:'application/json'}))});
+  $('galleryStatus').textContent=`${items.length} análise(s) salva(s) neste dispositivo.`;
+ }catch(e){$('galleryStatus').textContent='Não foi possível abrir a galeria: '+e.message;}
+}
+$('saveAnalysisBtn').onclick=async()=>{
+ if(!lastResults.length){setStatus('galleryStatus','Faça uma análise antes de salvar.');return}
+ const photo=getCurrentPhotoData();if(!photo){setStatus('galleryStatus','Não há foto disponível para salvar.');return}
+ const item={lot:$('lot').value.trim(),trayId:$('trayId').value.trim(),barcodeTarget:$('barcodeTarget').value,savedAt:new Date().toISOString(),photo,greenAvg:$('mGreen').textContent.replace('%',''),yellowAvg:$('mYellow').textContent.replace('%',''),grade:params(),results:lastResults};
+ try{await dbSave(item);setStatus('galleryStatus','Análise e foto salvas neste dispositivo.');await refreshGallery()}catch(e){setStatus('galleryStatus','Falha ao salvar. O armazenamento pode estar cheio: '+e.message)}
+};
+$('refreshGalleryBtn').onclick=refreshGallery;
+
+async function scanBarcode(){
+ if(!('BarcodeDetector' in window)){setStatus('barcodeStatus','Este navegador não oferece leitura de código de barras integrada. Digite o código manualmente ou teste no Chrome Android.');return}
+ try{
+  const detector=new BarcodeDetector({formats:['code_128','code_39','ean_13','ean_8','qr_code','upc_a','upc_e','itf','codabar']});
+  if(barcodeStream)barcodeStream.getTracks().forEach(t=>t.stop());
+  barcodeStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'}},audio:false});
+  video.srcObject=barcodeStream;video.style.display='block';still.style.display='none';$('placeholder').style.display='none';
+  sourceKind='camera';await video.play();$('stopScanBtn').disabled=false;$('scanBarcodeBtn').disabled=true;
+  setStatus('barcodeStatus','Aponte a câmera para o código de barras.'); 
+  const tick=async()=>{
+   if(!barcodeStream)return;
+   try{const found=await detector.detect(video);if(found.length){const code=found[0].rawValue;$( $('barcodeTarget').value ).value=code;setStatus('barcodeStatus','Código lido: '+code);stopBarcodeScan();return}}catch(e){}
+   barcodeTimer=setTimeout(tick,250);
+  };tick();
+ }catch(e){setStatus('barcodeStatus','Não foi possível iniciar a leitura: '+e.message)}
+}
+function stopBarcodeScan(){
+ if(barcodeTimer)clearTimeout(barcodeTimer);barcodeTimer=null;
+ if(barcodeStream){barcodeStream.getTracks().forEach(t=>t.stop());barcodeStream=null}
+ $('stopScanBtn').disabled=true;$('scanBarcodeBtn').disabled=false;
+ video.style.display='none';
+ if(still.naturalWidth){still.style.display='block';sourceKind='still'}else{$('placeholder').style.display='block';sourceKind='none'}
+}
+$('scanBarcodeBtn').onclick=scanBarcode;$('stopScanBtn').onclick=stopBarcodeScan;
+
+// Habilita salvar depois da análise e ao capturar/carregar uma foto
+const originalAnalyze=analyze;
+analyze=function(){originalAnalyze();$('saveAnalysisBtn').disabled=!lastResults.length;};
+$('captureBtn').addEventListener('click',()=>{setTimeout(()=>{currentPhotoData=getCurrentPhotoData()},500)});
+$('upload').addEventListener('change',()=>setTimeout(()=>{currentPhotoData=getCurrentPhotoData()},500));
+refreshGallery();
+
+// Initial UI state
+video.style.display='none';still.style.display='none';
+if('serviceWorker' in navigator && location.protocol.startsWith('http')){window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));}
+</script></body></html>
